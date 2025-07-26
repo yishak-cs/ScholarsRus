@@ -257,30 +257,33 @@ export default function LoginPage() {
         </div>
 
         {/* Demo Credentials */}
-        <div className="w-full max-w-sm mb-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-blue-800 mb-3">Demo Credentials</h3>
-            <div className="space-y-2">
-              <button
-                onClick={() => fillDemoCredentials('admin')}
-                className="w-full text-left p-2 bg-white rounded border border-blue-200 hover:bg-blue-50 transition-colors text-xs"
-              >
-                <span className="font-medium text-red-600">Admin:</span> admin@scholarsrus.com / admin123
-              </button>
-              <button
-                onClick={() => fillDemoCredentials('manager')}
-                className="w-full text-left p-2 bg-white rounded border border-blue-200 hover:bg-blue-50 transition-colors text-xs"
-              >
-                <span className="font-medium text-orange-600">Manager:</span> manager@scholarsrus.com / manager123
-              </button>
-              <button
-                onClick={() => fillDemoCredentials('user')}
-                className="w-full text-left p-2 bg-white rounded border border-blue-200 hover:bg-blue-50 transition-colors text-xs"
-              >
-                <span className="font-medium text-green-600">Student:</span> student@scholarsrus.com / student123
-              </button>
-            </div>
-            <p className="text-xs text-blue-600 mt-2">Click any credential to auto-fill the form</p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h4 className="text-sm font-medium text-blue-900 mb-3">Demo Credentials (Click to auto-fill):</h4>
+          <div className="space-y-2 text-sm">
+            <button
+              type="button"
+              onClick={() => fillDemoCredentials('student')}
+              className="block w-full text-left p-2 rounded bg-white hover:bg-blue-100 transition-colors border border-blue-200"
+            >
+              <span className="font-medium text-blue-800">Student:</span> 
+              <span className="text-gray-700 ml-2">student@scholarsrus.com / student123</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillDemoCredentials('manager')}
+              className="block w-full text-left p-2 rounded bg-white hover:bg-green-100 transition-colors border border-green-200"
+            >
+              <span className="font-medium text-green-800">Manager:</span> 
+              <span className="text-gray-700 ml-2">manager@scholarsrus.com / manager123</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillDemoCredentials('admin')}
+              className="block w-full text-left p-2 rounded bg-white hover:bg-red-100 transition-colors border border-red-200"
+            >
+              <span className="font-medium text-red-800">Admin:</span> 
+              <span className="text-gray-700 ml-2">admin@scholarsrus.com / admin123</span>
+            </button>
           </div>
         </div>
 

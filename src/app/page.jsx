@@ -39,9 +39,9 @@ export default function Home() {
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Scholarship</span>
             <br />in Seconds, Not Hours
           </h1>
-          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-            ScholarsRus uses advanced AI to match you with thousands of scholarships and automatically generates 
-            winning essays, resumes, and application documents tailored to your unique profile.
+          <p className="text-xl text-gray-800 leading-relaxed max-w-2xl mx-auto">
+            Discover personalized scholarships and generate winning applications with AI assistance. 
+            Join thousands of students who have secured over $50M in scholarships.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Link href="/login">
@@ -150,26 +150,18 @@ export default function Home() {
               color: "from-yellow-500 to-orange-500",
               features: ["Bulk applications", "Auto-fill forms", "Document management"]
             }
-          ].map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <div key={index} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
-                <div className={`w-14 h-14 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <IconComponent className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-                <p className="text-gray-600 mb-6">{feature.description}</p>
-                <ul className="space-y-2">
-                  {feature.features.map((item, itemIndex) => (
-                    <li key={itemIndex} className="flex items-center text-sm text-gray-500">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></div>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+          ].map((feature, index) => (
+            <div 
+              key={index}
+              className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            >
+              <div className={`w-16 h-16 ${feature.color} rounded-2xl flex items-center justify-center mb-6 mx-auto`}>
+                <feature.icon className="w-8 h-8 text-white" />
               </div>
-            );
-          })}
+              <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">{feature.title}</h3>
+              <p className="text-gray-700 text-center leading-relaxed">{feature.description}</p>
+            </div>
+          ))}
         </div>
       </section>
 
