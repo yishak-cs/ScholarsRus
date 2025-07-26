@@ -8,35 +8,125 @@ import { Award, ArrowLeft, Mail, Lock, Eye, EyeOff, Shield, Zap, Users, Github }
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const router = useRouter();
 
+  // Mock user credentials with different roles
+  const mockUsers = [
+    // Admin users
+    {
+      email: 'admin@scholarsrus.com',
+      password: 'admin123',
+      role: 'admin',
+      name: 'John Admin',
+      redirectTo: '/admin'
+    },
+    {
+      email: 'admin2@scholarsrus.com',
+      password: 'admin456',
+      role: 'admin',
+      name: 'Sarah Admin',
+      redirectTo: '/admin'
+    },
+    
+    // Manager users
+    {
+      email: 'manager@scholarsrus.com',
+      password: 'manager123',
+      role: 'manager',
+      name: 'Mike Manager',
+      redirectTo: '/manager'
+    },
+    {
+      email: 'manager2@scholarsrus.com',
+      password: 'manager456',
+      role: 'manager',
+      name: 'Lisa Manager',
+      redirectTo: '/manager'
+    },
+    
+    // Regular users (students)
+    {
+      email: 'student@scholarsrus.com',
+      password: 'student123',
+      role: 'user',
+      name: 'Alex Student',
+      redirectTo: '/dashboard'
+    },
+    {
+      email: 'user@scholarsrus.com',
+      password: 'user123',
+      role: 'user',
+      name: 'Emma User',
+      redirectTo: '/dashboard'
+    },
+    {
+      email: 'demo@scholarsrus.com',
+      password: 'demo123',
+      role: 'user',
+      name: 'Demo User',
+      redirectTo: '/dashboard'
+    }
+  ];
+
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Clear error when user starts typing
+    if (error) setError('');
+  };
+
+  const authenticateUser = (email, password) => {
+    return mockUsers.find(user => 
+      user.email.toLowerCase() === email.toLowerCase() && 
+      user.password === password
+    );
   };
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // Simulate email login
+    // Simulate API call delay
     setTimeout(() => {
-      setIsLoading(false);
-      router.push('/dashboard');
+      const user = authenticateUser(formData.email, formData.password);
+      
+      if (user) {
+        // Store user info in localStorage (in real app, use proper session management)
+        localStorage.setItem('currentUser', JSON.stringify({
+          email: user.email,
+          name: user.name,
+          role: user.role
+        }));
+        
+        setIsLoading(false);
+        router.push(user.redirectTo);
+      } else {
+        setIsLoading(false);
+        setError('Invalid email or password. Please check your credentials.');
+      }
     }, 1500);
   };
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     
-    // Simulate Google OAuth
+    // Simulate Google OAuth - default to student role
     setTimeout(() => {
+      const defaultUser = {
+        email: 'google-user@gmail.com',
+        name: 'Google User',
+        role: 'user'
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(defaultUser));
       setIsLoading(false);
       router.push('/dashboard');
     }, 2000);
@@ -45,11 +135,38 @@ export default function LoginPage() {
   const handleGithubLogin = async () => {
     setIsLoading(true);
     
-    // Simulate GitHub OAuth
+    // Simulate GitHub OAuth - default to student role
     setTimeout(() => {
+      const defaultUser = {
+        email: 'github-user@github.com',
+        name: 'GitHub User',
+        role: 'user'
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(defaultUser));
       setIsLoading(false);
       router.push('/dashboard');
     }, 2000);
+  };
+
+  const fillDemoCredentials = (role) => {
+    let demoUser;
+    switch(role) {
+      case 'admin':
+        demoUser = mockUsers[0]; // admin@scholarsrus.com
+        break;
+      case 'manager':
+        demoUser = mockUsers[2]; // manager@scholarsrus.com
+        break;
+      default:
+        demoUser = mockUsers[4]; // student@scholarsrus.com
+    }
+    
+    setFormData({
+      email: demoUser.email,
+      password: demoUser.password
+    });
+    setError('');
   };
 
   return (
@@ -76,10 +193,10 @@ export default function LoginPage() {
           {/* Main Message */}
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold mb-3">
-              Your Scholarship Journey Starts Here
+              Welcome to ScholarsRus
             </h2>
             <p className="text-lg opacity-90 mb-6">
-              Join thousands of students who have secured funding with our AI-powered platform
+              Your comprehensive scholarship management platform for students, managers, and administrators
             </p>
           </div>
 
@@ -88,18 +205,18 @@ export default function LoginPage() {
             {[
               {
                 icon: Zap,
-                title: "Instant Matching",
-                description: "AI finds perfect scholarships in seconds"
+                title: "AI-Powered Matching",
+                description: "Find perfect scholarships instantly"
               },
               {
                 icon: Shield,
                 title: "Secure & Private",
-                description: "Your data is protected with enterprise security"
+                description: "Enterprise-grade security for all users"
               },
               {
                 icon: Users,
-                title: "Proven Success",
-                description: "95% of our users secure at least one scholarship"
+                title: "Multi-Role Access",
+                description: "Students, managers, and admins in one platform"
               }
             ].map((feature, index) => {
               const IconComponent = feature.icon;
@@ -139,13 +256,48 @@ export default function LoginPage() {
           </Link>
         </div>
 
+        {/* Demo Credentials */}
+        <div className="w-full max-w-sm mb-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-blue-800 mb-3">Demo Credentials</h3>
+            <div className="space-y-2">
+              <button
+                onClick={() => fillDemoCredentials('admin')}
+                className="w-full text-left p-2 bg-white rounded border border-blue-200 hover:bg-blue-50 transition-colors text-xs"
+              >
+                <span className="font-medium text-red-600">Admin:</span> admin@scholarsrus.com / admin123
+              </button>
+              <button
+                onClick={() => fillDemoCredentials('manager')}
+                className="w-full text-left p-2 bg-white rounded border border-blue-200 hover:bg-blue-50 transition-colors text-xs"
+              >
+                <span className="font-medium text-orange-600">Manager:</span> manager@scholarsrus.com / manager123
+              </button>
+              <button
+                onClick={() => fillDemoCredentials('user')}
+                className="w-full text-left p-2 bg-white rounded border border-blue-200 hover:bg-blue-50 transition-colors text-xs"
+              >
+                <span className="font-medium text-green-600">Student:</span> student@scholarsrus.com / student123
+              </button>
+            </div>
+            <p className="text-xs text-blue-600 mt-2">Click any credential to auto-fill the form</p>
+          </div>
+        </div>
+
         {/* Login Card */}
         <div className="w-full max-w-sm">
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-1">Welcome Back!</h2>
-              <p className="text-gray-600 text-sm">Sign in to continue your scholarship journey</p>
+              <p className="text-gray-600 text-sm">Sign in to access your account</p>
             </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
 
             {/* Email/Password Form */}
             <form onSubmit={handleEmailLogin} className="space-y-4 mb-5">
@@ -298,10 +450,10 @@ export default function LoginPage() {
             {/* Quick Demo Button */}
             <div className="mt-4 text-center">
               <button
-                onClick={() => router.push('/dashboard')}
+                onClick={() => fillDemoCredentials('user')}
                 className="text-blue-600 hover:text-blue-700 font-medium transition-colors text-sm"
               >
-                🚀 Try Quick Demo (No Sign-up Required)
+                🚀 Try Quick Demo (Student Account)
               </button>
             </div>
 

@@ -10,10 +10,7 @@ import {
   FileText, 
   Brain, 
   User, 
-  Bell, 
-  Settings, 
   Award,
-  TrendingUp,
   Clock,
   BookOpen,
   Zap,
@@ -68,13 +65,6 @@ export default function Dashboard() {
     }
   ];
 
-  const stats = [
-    { label: "Scholarships Found", value: "1,247", icon: Search, color: "text-blue-600" },
-    { label: "Applications Sent", value: "23", icon: FileText, color: "text-green-600" },
-    { label: "Success Rate", value: "78%", icon: TrendingUp, color: "text-purple-600" },
-    { label: "Total Applied", value: "$125K", icon: DollarSign, color: "text-orange-600" }
-  ];
-
   const recentActivities = [
     { action: "New scholarship match", item: "STEM Excellence Award", time: "2 hours ago", type: "match" },
     { action: "Application submitted", item: "Future Leaders Grant", time: "1 day ago", type: "application" },
@@ -83,107 +73,51 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation Header */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Award className="w-5 h-5 text-white" />
-              </div>
-              <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                ScholarsRus
-              </span>
-            </div>
+    <div className="space-y-8">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
+        <h1 className="text-3xl font-bold mb-2">
+          Welcome back, Alex! 👋
+        </h1>
+        <p className="text-lg text-white opacity-90">
+          You have 5 new scholarship matches and 3 upcoming deadlines.
+        </p>
+      </div>
 
-            {/* Navigation Items */}
-            <div className="hidden md:flex items-center space-x-8">
-              <button 
-                onClick={() => setActiveTab('discover')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'discover' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600'
-                }`}
-              >
-                Discover
-              </button>
-              <button 
-                onClick={() => setActiveTab('applications')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'applications' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600'
-                }`}
-              >
-                Applications
-              </button>
-              <button 
-                onClick={() => setActiveTab('documents')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'documents' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600'
-                }`}
-              >
-                AI Documents
-              </button>
-              <button 
-                onClick={() => setActiveTab('profile')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'profile' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600'
-                }`}
-              >
-                Profile
-              </button>
-            </div>
-
-            {/* Right side items */}
-            <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                <Bell className="w-5 h-5" />
-              </button>
-              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                <Settings className="w-5 h-5" />
-              </button>
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
+        <div className="lg:col-span-2">
+          <div className="space-y-6">
+            {/* Tab Navigation */}
+            <div className="bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+              <div className="flex space-x-1">
+                <button 
+                  onClick={() => setActiveTab('discover')}
+                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === 'discover' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  Discover
+                </button>
+                <button 
+                  onClick={() => setActiveTab('applications')}
+                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === 'applications' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  Applications
+                </button>
+                <button 
+                  onClick={() => setActiveTab('documents')}
+                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === 'documents' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  AI Documents
+                </button>
               </div>
             </div>
-          </div>
-        </div>
-      </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, Alex! 👋
-          </h1>
-          <p className="text-gray-600">
-            You have 5 new scholarship matches and 3 upcoming deadlines.
-          </p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => {
-            const IconComponent = stat.icon;
-            return (
-              <Card key={index} className="hover:shadow-lg transition-shadow duration-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    </div>
-                    <IconComponent className={`w-8 h-8 ${stat.color}`} />
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
             {activeTab === 'discover' && (
               <div className="space-y-6">
                 {/* Search and Filters */}
@@ -233,14 +167,14 @@ export default function Dashboard() {
                                 {scholarship.matchScore}% Match
                               </span>
                             </div>
-                            <p className="text-gray-600 mb-2">{scholarship.organization}</p>
-                            <p className="text-gray-700 mb-4">{scholarship.description}</p>
+                            <p className="text-gray-700 mb-2">{scholarship.organization}</p>
+                            <p className="text-gray-800 mb-4">{scholarship.description}</p>
                           </div>
                           <div className="text-right ml-4">
                             <div className="text-2xl font-bold text-green-600 mb-1">
                               {formatCurrency(scholarship.amount)}
                             </div>
-                            <div className="text-sm text-gray-600 flex items-center">
+                            <div className="text-sm text-gray-700 flex items-center">
                               <Calendar className="w-4 h-4 mr-1" />
                               {formatDate(scholarship.deadline)}
                             </div>
@@ -249,7 +183,7 @@ export default function Dashboard() {
 
                         <div className="flex flex-wrap gap-2 mb-4">
                           {scholarship.requirements.map((req, index) => (
-                            <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                            <span key={index} className="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full">
                               {req}
                             </span>
                           ))}
@@ -281,6 +215,29 @@ export default function Dashboard() {
                     </Card>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'applications' && (
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <FileText className="w-5 h-5 mr-2" />
+                      My Applications
+                    </CardTitle>
+                    <CardDescription>
+                      Track your scholarship applications and their status
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8 text-gray-500">
+                      <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>You have 1 application in progress.</p>
+                      <p className="text-sm">Keep applying to increase your chances!</p>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
 
@@ -325,90 +282,90 @@ export default function Dashboard() {
               </div>
             )}
           </div>
+        </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Zap className="w-5 h-5 mr-2" />
-                  Quick Actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <button className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all flex items-center justify-center">
-                  <Brain className="w-4 h-4 mr-2" />
-                  Generate Essay
-                </button>
-                <button className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
-                  <Search className="w-4 h-4 mr-2" />
-                  Find More Scholarships
-                </button>
-                <button className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
-                  <User className="w-4 h-4 mr-2" />
-                  Update Profile
-                </button>
-              </CardContent>
-            </Card>
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Zap className="w-5 h-5 mr-2" />
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <button className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all flex items-center justify-center">
+                <Brain className="w-4 h-4 mr-2" />
+                Generate Essay
+              </button>
+              <button className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
+                <Search className="w-4 h-4 mr-2" />
+                Find More Scholarships
+              </button>
+              <button className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
+                <User className="w-4 h-4 mr-2" />
+                Update Profile
+              </button>
+            </CardContent>
+          </Card>
 
-            {/* Recent Activity */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Clock className="w-5 h-5 mr-2" />
-                  Recent Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentActivities.map((activity, index) => (
-                    <div key={index} className="flex items-start space-x-3">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${
-                        activity.type === 'match' ? 'bg-blue-500' :
-                        activity.type === 'application' ? 'bg-green-500' :
-                        activity.type === 'document' ? 'bg-purple-500' :
-                        'bg-gray-500'
-                      }`}></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-900">{activity.action}</p>
-                        <p className="text-sm text-blue-600 font-medium">{activity.item}</p>
-                        <p className="text-xs text-gray-500">{activity.time}</p>
-                      </div>
+          {/* Recent Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Clock className="w-5 h-5 mr-2" />
+                Recent Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {recentActivities.map((activity, index) => (
+                  <div key={index} className="flex items-start space-x-3">
+                    <div className={`w-2 h-2 rounded-full mt-2 ${
+                      activity.type === 'match' ? 'bg-blue-500' :
+                      activity.type === 'application' ? 'bg-green-500' :
+                      activity.type === 'document' ? 'bg-purple-500' :
+                      'bg-gray-500'
+                    }`}></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-900">{activity.action}</p>
+                      <p className="text-sm text-blue-600 font-medium">{activity.item}</p>
+                      <p className="text-xs text-gray-500">{activity.time}</p>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Upcoming Deadlines */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Target className="w-5 h-5 mr-2" />
-                  Upcoming Deadlines
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Green Energy Fund</p>
-                      <p className="text-xs text-red-600">Due in 5 days</p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Tech Innovators</p>
-                      <p className="text-xs text-yellow-600">Due in 15 days</p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Upcoming Deadlines */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Target className="w-5 h-5 mr-2" />
+                Upcoming Deadlines
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Green Energy Fund</p>
+                    <p className="text-xs text-red-600">Due in 5 days</p>
                   </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Tech Innovators</p>
+                    <p className="text-xs text-yellow-600">Due in 15 days</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
