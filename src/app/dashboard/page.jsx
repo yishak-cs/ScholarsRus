@@ -146,6 +146,7 @@ export default function Dashboard() {
                         <Filter className="w-4 h-4 mr-2" />
                         Filters
                       </button>
+
                     </div>
                   </CardContent>
                 </Card>
@@ -368,6 +369,6 @@ export default function Dashboard() {
           </Card>
         </div>
       </div>
-    </div>
-  );
-} 
+          </div>
+    );
+  }
