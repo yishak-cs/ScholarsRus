@@ -1,8 +1,6 @@
-// ScholarsRus - Comprehensive Scholarship Recommendation System
-// Powered by Neon Serverless Postgres
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -10,476 +8,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User Management
 model User {
-  id              String    @id @default(cuid())
-  email           String    @unique
-  emailVerified   DateTime?
-  name            String?
-  image           String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
 
-  // Authentication
-  accounts        Account[]
-  sessions        Session[]
-  
-  // Profile
-  profile         StudentProfile?
-  
-  // Applications & Documents
-  applications    Application[]
-  documents       Document[]
-  savedScholarships SavedScholarship[]
-  
-  // AI Interactions
-  aiGenerations   AIGeneration[]
-  
-  @@map("users")
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
+  @@unique([email])
+  @@map("user")
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("sessions")
+  @@unique([token])
+  @@map("session")
 }
 
-// Student Profile for AI Matching
-model StudentProfile {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Academic Information
-  gpa             Float?
-  maxGpa          Float?   @default(4.0)
-  major           String?
-  minor           String?
-  graduationYear  Int?
-  schoolName      String?
-  schoolType      SchoolType?
-  degreeLevel     DegreeLevel?
-  
-  // Demographics
-  dateOfBirth     DateTime?
-  gender          Gender?
-  ethnicity       String[]
-  citizenship     String?
-  stateResidence  String?
-  countryResidence String? @default("United States")
-  
-  // Financial
-  familyIncome    IncomeRange?
-  financialNeed   Boolean? @default(false)
-  
-  // Activities & Achievements
-  activities      Activity[]
-  achievements    Achievement[]
-  workExperience  WorkExperience[]
-  
-  // Essay Topics & Interests
-  careerGoals     String?
-  interests       String[]
-  skills          String[]
-  volunteerHours  Int?
-  
-  // Preferences
-  preferences     UserPreferences?
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  @@map("student_profiles")
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
 }
 
-model UserPreferences {
-  id                    String  @id @default(cuid())
-  profileId             String  @unique
-  profile               StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  
-  minAward              Int?    // Minimum scholarship amount
-  maxAward              Int?    // Maximum scholarship amount
-  preferredCategories   String[] // Preferred scholarship categories
-  excludeCategories     String[] // Categories to exclude
-  deadlineBuffer        Int?    @default(30) // Days before deadline to stop showing
-  maxApplications       Int?    @default(10) // Max applications per month
-  
-  // Notification preferences
-  emailNotifications    Boolean @default(true)
-  smsNotifications      Boolean @default(false)
-  weeklyDigest          Boolean @default(true)
-  
-  @@map("user_preferences")
-}
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
 
-model Activity {
-  id          String  @id @default(cuid())
-  profileId   String
-  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  
-  type        ActivityType
-  name        String
-  description String?
-  role        String?
-  startDate   DateTime
-  endDate     DateTime?
-  hoursPerWeek Int?
-  
-  @@map("activities")
+  @@map("verification")
 }
-
-model Achievement {
-  id          String  @id @default(cuid())
-  profileId   String
-  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  
-  title       String
-  description String?
-  date        DateTime
-  category    AchievementCategory
-  level       AchievementLevel
-  
-  @@map("achievements")
-}
-
-model WorkExperience {
-  id          String  @id @default(cuid())
-  profileId   String
-  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  
-  company     String
-  position    String
-  description String?
-  startDate   DateTime
-  endDate     DateTime?
-  isCurrentJob Boolean @default(false)
-  
-  @@map("work_experiences")
-}
-
-// Scholarship Database
-model Scholarship {
-  id                String   @id @default(cuid())
-  
-  // Basic Information
-  title             String
-  description       String   @db.Text
-  amount            Int      // Award amount in USD
-  maxAmount         Int?     // For range-based awards
-  numberOfAwards    Int?     @default(1)
-  
-  // Organization
-  organizationName  String
-  organizationUrl   String?
-  applicationUrl    String?
-  
-  // Deadlines
-  applicationDeadline DateTime
-  notificationDate   DateTime?
-  
-  // Eligibility Criteria
-  eligibilityCriteria EligibilityCriteria?
-  
-  // Requirements
-  requirements      Requirement[]
-  
-  // Categories & Tags
-  categories        String[]
-  tags              String[]
-  
-  // Status & Metadata
-  isActive          Boolean  @default(true)
-  isVerified        Boolean  @default(false)
-  sourceUrl         String?  // Original source URL
-  lastScraped       DateTime @default(now())
-  
-  // Relations
-  applications      Application[]
-  savedBy           SavedScholarship[]
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
-  @@map("scholarships")
-}
-
-model EligibilityCriteria {
-  id            String @id @default(cuid())
-  scholarshipId String @unique
-  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
-  
-  // Academic Requirements
-  minGpa        Float?
-  maxGpa        Float?
-  requiredMajors String[]
-  excludedMajors String[]
-  degreeLevel   DegreeLevel[]
-  schoolTypes   SchoolType[]
-  
-  // Demographic Requirements
-  genderRequirement    Gender[]
-  ethnicityRequirement String[]
-  citizenshipRequired  String[]
-  stateResidency       String[]
-  
-  // Other Requirements
-  minAge        Int?
-  maxAge        Int?
-  incomeRequirement IncomeRange[]
-  
-  @@map("eligibility_criteria")
-}
-
-model Requirement {
-  id            String @id @default(cuid())
-  scholarshipId String
-  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
-  
-  type          RequirementType
-  title         String
-  description   String?
-  isOptional    Boolean @default(false)
-  wordLimit     Int?
-  
-  @@map("requirements")
-}
-
-// Application Management
-model Application {
-  id            String @id @default(cuid())
-  userId        String
-  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  scholarshipId String
-  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
-  
-  status        ApplicationStatus @default(DRAFT)
-  submittedAt   DateTime?
-  
-  // AI-Generated Content
-  documents     Document[]
-  
-  // Application Data
-  applicationData Json? // Store form responses
-  
-  // Tracking
-  matchScore    Float? // AI-calculated match score
-  successProbability Float? // ML-predicted success rate
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  @@unique([userId, scholarshipId])
-  @@map("applications")
-}
-
-model SavedScholarship {
-  id            String @id @default(cuid())
-  userId        String
-  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  scholarshipId String
-  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
-  
-  notes         String?
-  priority      Priority @default(MEDIUM)
-  
-  createdAt     DateTime @default(now())
-  
-  @@unique([userId, scholarshipId])
-  @@map("saved_scholarships")
-}
-
-// Document & AI Management
-model Document {
-  id            String @id @default(cuid())
-  userId        String
-  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  applicationId String?
-  application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  
-  title         String
-  type          DocumentType
-  content       String @db.Text
-  
-  // AI Generation Info
-  isAIGenerated Boolean @default(false)
-  aiGenerationId String?
-  aiGeneration  AIGeneration? @relation(fields: [aiGenerationId], references: [id])
-  
-  // File Storage (if uploaded)
-  fileUrl       String?
-  fileName      String?
-  fileSize      Int?
-  mimeType      String?
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  @@map("documents")
-}
-
-model AIGeneration {
-  id            String @id @default(cuid())
-  userId        String
-  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  type          AIGenerationType
-  prompt        String @db.Text
-  content       String @db.Text
-  
-  // Generation Parameters
-  model         String?
-  temperature   Float?
-  maxTokens     Int?
-  
-  // Quality Metrics
-  rating        Int? // User rating 1-5
-  feedback      String?
-  
-  // Relations
-  documents     Document[]
-  
-  createdAt     DateTime @default(now())
-  
-  @@map("ai_generations")
-}
-
-// Enums for Type Safety
-enum SchoolType {
-  HIGH_SCHOOL
-  COMMUNITY_COLLEGE
-  FOUR_YEAR_COLLEGE
-  UNIVERSITY
-  GRADUATE_SCHOOL
-  TRADE_SCHOOL
-  ONLINE_SCHOOL
-}
-
-enum DegreeLevel {
-  HIGH_SCHOOL
-  ASSOCIATE
-  BACHELOR
-  MASTER
-  DOCTORATE
-  CERTIFICATE
-  DIPLOMA
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  NON_BINARY
-  OTHER
-  PREFER_NOT_TO_SAY
-}
-
-enum IncomeRange {
-  UNDER_25K
-  RANGE_25K_50K
-  RANGE_50K_75K
-  RANGE_75K_100K
-  RANGE_100K_150K
-  OVER_150K
-}
-
-enum ActivityType {
-  SPORTS
-  VOLUNTEER
-  ACADEMIC_CLUB
-  LEADERSHIP
-  WORK
-  RESEARCH
-  ARTS
-  MUSIC
-  OTHER
-}
-
-enum AchievementCategory {
-  ACADEMIC
-  ATHLETIC
-  ARTISTIC
-  LEADERSHIP
-  COMMUNITY_SERVICE
-  RESEARCH
-  PROFESSIONAL
-  OTHER
-}
-
-enum AchievementLevel {
-  SCHOOL
-  DISTRICT
-  STATE
-  NATIONAL
-  INTERNATIONAL
-}
-
-enum RequirementType {
-  ESSAY
-  RECOMMENDATION_LETTER
-  TRANSCRIPT
-  RESUME
-  PERSONAL_STATEMENT
-  PORTFOLIO
-  INTERVIEW
-  OTHER_DOCUMENT
-}
-
-enum ApplicationStatus {
-  DRAFT
-  IN_PROGRESS
-  SUBMITTED
-  UNDER_REVIEW
-  ACCEPTED
-  REJECTED
-  WAITLISTED
-}
-
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
-enum DocumentType {
-  ESSAY
-  PERSONAL_STATEMENT
-  RESUME
-  COVER_LETTER
-  RECOMMENDATION_LETTER
-  TRANSCRIPT
-  PORTFOLIO
-  OTHER
-}
-
-enum AIGenerationType {
-  ESSAY
-  RESUME
-  COVER_LETTER
-  PERSONAL_STATEMENT
-  APPLICATION_ANSWERS
-  SCHOLARSHIP_MATCHING
-} 
