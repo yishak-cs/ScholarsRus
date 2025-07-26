@@ -1,35 +1,15 @@
-import OpenAI from 'openai'
+import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
-
-export interface GenerateDocumentParams {
-  type: 'essay' | 'resume' | 'cover_letter' | 'personal_statement'
-  scholarshipInfo: {
-    title: string
-    description: string
-    requirements: string[]
-    amount: number
-  }
-  userProfile: {
-    name: string
-    major: string
-    gpa: number
-    achievements: string[]
-    activities: string[]
-    careerGoals: string
-    interests: string[]
-  }
-  additionalContext?: string
-}
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export async function generateDocument({
   type,
   scholarshipInfo,
   userProfile,
   additionalContext
-}: GenerateDocumentParams): Promise<string> {
+}) {
   const prompts = {
     essay: `Write a compelling scholarship essay for "${scholarshipInfo.title}" (${scholarshipInfo.amount} award). 
     
@@ -75,7 +55,7 @@ export async function generateDocument({
     Key Experiences: ${userProfile.activities.join(', ')}
     
     Write a 400-600 word personal statement that tells the student's unique story, demonstrates growth, and connects their experiences to their future goals.`
-  }
+  };
 
   try {
     const completion = await openai.chat.completions.create({
@@ -92,17 +72,17 @@ export async function generateDocument({
       ],
       temperature: 0.7,
       max_tokens: 2000,
-    })
+    });
 
-    return completion.choices[0]?.message?.content || "Error generating document"
+    return completion.choices[0]?.message?.content || "Error generating document";
   } catch (error) {
-    console.error('AI Generation Error:', error)
-    throw new Error('Failed to generate document')
+    console.error('AI Generation Error:', error);
+    throw new Error('Failed to generate document');
   }
 }
 
-export async function generateScholarshipMatches(userProfile: any): Promise<any[]> {
+export async function generateScholarshipMatches(userProfile) {
   // This would integrate with your scholarship database
   // For now, return a sample structure
-  return []
+  return [];
 } 
